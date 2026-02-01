@@ -121,6 +121,42 @@ function blur() {
     }).then(refresh);
 }
 
+function saveImage() {
+    fetch("/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            format: format.value,
+            quality: quality.value
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(d => alert(d.error));
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "result." + format.value;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+}
+
+function toggleQuality() {
+    const format = document.getElementById("format").value;
+    const qualityBlock = document.getElementById("qualityBlock");
+
+    if (format === "jpg" || format === "jpeg") {
+        qualityBlock.style.display = "block";
+    } else {
+        qualityBlock.style.display = "none";
+    }
+}
+
 setInterval(() => {
     refresh();
 }, 1000);

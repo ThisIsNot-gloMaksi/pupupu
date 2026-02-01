@@ -1,4 +1,5 @@
 import base64
+import os
 
 from flask import Flask, request, jsonify, send_file, render_template
 import cv2
@@ -154,6 +155,36 @@ def mask_crop():
     cv2.imwrite(UPLOAD_PATH, result)
 
     return jsonify(message="Произвольная область вырезана")
+
+@app.route("/save", methods=["POST"])
+def save():
+    data = request.json
+    format = data.get("format", "png").lower()
+    quality = int(data.get("quality", 95))
+
+    img = cv2.imread(UPLOAD_PATH)
+
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    filename = f"result.{format}"
+    save_path = os.path.join("uploads", filename)
+
+    try:
+        if format == "jpg" or format == "jpeg":
+            cv2.imwrite(save_path, img, [cv2.IMWRITE_JPEG_QUALITY, quality])
+        elif format == "png":
+            cv2.imwrite(save_path, img)
+        elif format == "tiff":
+            cv2.imwrite(save_path, img)
+        else:
+            return jsonify(error="Неподдерживаемый формат"), 400
+
+        return send_file(save_path, as_attachment=True)
+
+    except:
+        return jsonify(error="Ошибка при сохранении файла"), 500
+
 
 
 

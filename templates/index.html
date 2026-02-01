@@ -51,7 +51,7 @@
     <div class="panel">
         <h3>Яркость / Контраст</h3>
         <label>Контраст:
-            <input type="range" min="0.5" max="3" step="0.1" id="contrast" value="1">
+            <input type="range" min="0.5" max="3" step="0.1" id="contrast" value="1.75">
         </label>
         <label>Яркость:
             <input type="range" min="-100" max="100" id="brightness" value="0">
@@ -73,6 +73,27 @@
         <input type="number" id="kernel" value="5">
         <button onclick="blur()">Размытие</button>
     </div>
+
+    <div class="panel">
+    <h3>Сохранение изображения</h3>
+
+    <label>Формат:
+        <select id="format" onchange="toggleQuality()">
+            <option value="JPEG">JPEG</option>
+            <option value="png">PNG</option>
+            <option value="tiff">TIFF</option>
+        </select>
+    </label>
+
+    <div id="qualityBlock">
+        <label>Качество (JPEG):
+            <input type="range" id="quality" min="10" max="100" value="95">
+        </label>
+    </div>
+
+    <button onclick="saveImage()">Сохранить</button>
+</div>
+
 
 </div>
 
