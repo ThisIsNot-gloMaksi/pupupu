@@ -16,13 +16,14 @@
         <input type="file" id="file">
         <button onclick="upload()">Загрузить</button>
         <div></div>
-        <canvas id="canvas" width="500"></canvas><br>
+        <canvas id="canvas" width="500"></canvas>
+        <br>
     </div>
 
     <div class="panel">
-    <h3>История изменений</h3>
-    <button onclick="undo()">Undo</button>
-    <button onclick="resetImage()">Reset</button>
+        <h3>История изменений</h3>
+        <button onclick="undo()">Undo</button>
+        <button onclick="resetImage()">Reset</button>
     </div>
 
 
@@ -57,12 +58,8 @@
 
     <div class="panel">
         <h3>Яркость / Контраст</h3>
-        <label>Контраст:
-            <input type="range" min="0" max="3" step="0.1" id="contrast" value="1.75">
-        </label>
-        <label>Яркость:
-            <input type="range" min="-100" max="100" id="brightness" value="0">
-        </label>
+        Контраст (alpha): <input type="number" id="alpha" value="1" step="0.1">
+        Яркость (beta): <input type="number" id="beta" value="0" step="1">
         <button onclick="brightness()">Применить</button>
     </div>
 
@@ -75,59 +72,60 @@
     </div>
 
     <div class="panel">
-    <h3>Размытие изображения</h3>
+        <h3>Размытие изображения</h3>
 
-    <label>Тип фильтра:
-        <select id="blurType">
-            <option value="average">Среднее</option>
-            <option value="gaussian">Гауссово</option>
-            <option value="median">Медианное</option>
-        </select>
-    </label>
+        <label>Тип фильтра:
+            <select id="blurType">
+                <option value="average">Среднее</option>
+                <option value="gaussian">Гауссово</option>
+                <option value="median">Медианное</option>
+            </select>
+        </label>
 
-    <label>Размер ядра:
-        <input type="number" id="kernel" value="5" min="3" step="2">
-    </label><button onclick="blurPhoto()">Применить</button>
+        <label>Размер ядра:
+            <input type="number" id="kernel" value="5" min="3" step="2">
+        </label>
+        <button onclick="blurPhoto()">Применить</button>
     </div>
 
-        <div class="panel">
-    <h3>Добавление шума</h3>
+    <div class="panel">
+        <h3>Добавление шума</h3>
 
-    <label>Тип шума:
-        <select id="noiseType">
-            <option value="gaussian">Гауссов</option>
-            <option value="sp">Соль и перец</option>
-        </select>
-    </label>
+        <label>Тип шума:
+            <select id="noiseType">
+                <option value="gaussian">Гауссов</option>
+                <option value="sp">Соль и перец</option>
+            </select>
+        </label>
 
-    <label>Интенсивность:
-        <input type="range" id="noiseAmount"
-               min="0.001" max="0.1" step="0.001" value="0.02">
-    </label>
+        <label>Интенсивность:
+            <input type="range" id="noiseAmount"
+                   min="0.001" max="0.1" step="0.001" value="0.02">
+        </label>
 
-    <button onclick="applyNoise()">Применить</button>
-</div>
+        <button onclick="applyNoise()">Применить</button>
+    </div>
 
 
     <div class="panel">
-    <h3>Сохранение изображения</h3>
+        <h3>Сохранение изображения</h3>
 
-    <label>Формат:
-        <select id="format" onchange="toggleQuality()">
-            <option value="JPEG">JPEG</option>
-            <option value="png">PNG</option>
-            <option value="tiff">TIFF</option>
-        </select>
-    </label>
-
-    <div id="qualityBlock">
-        <label>Качество (JPEG):
-            <input type="range" id="quality" min="10" max="100" value="95">
+        <label>Формат:
+            <select id="format" onchange="toggleQuality()">
+                <option value="JPEG">JPEG</option>
+                <option value="png">PNG</option>
+                <option value="tiff">TIFF</option>
+            </select>
         </label>
-    </div>
 
-    <button onclick="saveImage()">Сохранить</button>
-</div>
+        <div id="qualityBlock">
+            <label>Качество (JPEG):
+                <input type="range" id="quality" min="10" max="100" value="95">
+            </label>
+        </div>
+
+        <button onclick="saveImage()">Сохранить</button>
+    </div>
 </div>
 
 <script src="/static/script.js"></script>

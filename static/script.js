@@ -91,8 +91,8 @@ function brightness() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            contrast: +contrast.value,
-            brightness: +brightness.value
+            contrast: +alpha.value,
+            brightness: +beta.value
         })
     }).then(refresh);
 }
