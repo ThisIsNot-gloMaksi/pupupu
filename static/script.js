@@ -109,16 +109,38 @@ function color() {
     }).then(refresh);
 }
 
-function noise() {
-    fetch("/noise", { method: "POST" }).then(refresh);
+function applyNoise() {
+    fetch("/noise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            type: noiseType.value,
+            amount: +noiseAmount.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.error) alert(d.error);
+        else refresh();
+    });
 }
 
-function blur() {
+
+function blurPhoto() {
+    console.log("hello")
     fetch("/blur", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kernel: +kernel.value })
-    }).then(refresh);
+        body: JSON.stringify({
+            type: blurType.value,
+            kernel: +kernel.value
+        })
+    })
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) alert(d.error);
+            else refresh();
+        });
 }
 
 function saveImage() {

@@ -68,11 +68,21 @@
     </div>
 
     <div class="panel">
-        <h3>Фильтры</h3>
-        <button onclick="noise()">Добавить шум</button>
-        <input type="number" id="kernel" value="5">
-        <button onclick="blur()">Размытие</button>
+    <h3>Размытие изображения</h3>
+
+    <label>Тип фильтра:
+        <select id="blurType">
+            <option value="average">Среднее</option>
+            <option value="gaussian">Гауссово</option>
+            <option value="median">Медианное</option>
+        </select>
+    </label>
+
+    <label>Размер ядра:
+        <input type="number" id="kernel" value="5" min="3" step="2">
+    </label><button onclick="blurPhoto()">Применить</button>
     </div>
+
 
     <div class="panel">
     <h3>Сохранение изображения</h3>
@@ -92,6 +102,23 @@
     </div>
 
     <button onclick="saveImage()">Сохранить</button>
+</div>
+    <div class="panel">
+    <h3>Добавление шума</h3>
+
+    <label>Тип шума:
+        <select id="noiseType">
+            <option value="gaussian">Гауссов</option>
+            <option value="sp">Соль и перец</option>
+        </select>
+    </label>
+
+    <label>Интенсивность:
+        <input type="range" id="noiseAmount"
+               min="0.001" max="0.1" step="0.001" value="0.02">
+    </label>
+
+    <button onclick="applyNoise()">Применить</button>
 </div>
 
 

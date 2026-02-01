@@ -116,19 +116,74 @@ def color():
 
 @app.route("/noise", methods=["POST"])
 def noise():
+    data = request.json
+    noise_type = data.get("type", "gaussian")
+    amount = float(data.get("amount", 0.02))  # интенсивность
+
     img = cv2.imread(UPLOAD_PATH)
-    noise = np.random.normal(0, 25, img.shape).astype(np.uint8)
-    noisy = cv2.add(img, noise)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    if noise_type == "gaussian":
+        mean = 0
+        sigma = amount * 255
+        gauss = np.random.normal(mean, sigma, img.shape).astype(np.int16)
+        noisy = img.astype(np.int16) + gauss
+        noisy = np.clip(noisy, 0, 255).astype(np.uint8)
+
+    elif noise_type == "sp":
+        noisy = img.copy()
+        h, w, _ = img.shape
+        num = int(amount * h * w)
+
+        # соль
+        coords = (
+            np.random.randint(0, h, num),
+            np.random.randint(0, w, num)
+        )
+        noisy[coords] = 255
+
+        # перец
+        coords = (
+            np.random.randint(0, h, num),
+            np.random.randint(0, w, num)
+        )
+        noisy[coords] = 0
+
+    else:
+        return jsonify(error="Неизвестный тип шума"), 400
+
     cv2.imwrite(UPLOAD_PATH, noisy)
     return jsonify(message="Шум добавлен")
 
 
 @app.route("/blur", methods=["POST"])
 def blur():
-    k = request.json["kernel"]
+    data = request.json
+    k = int(data.get("kernel", 5))
+    blur_type = data.get("type", "gaussian")
+    print(k, blur_type)
+
+    if k % 2 == 0 or k <= 1:
+        return jsonify(error="Размер ядра должен быть нечётным и > 1"), 400
+
     img = cv2.imread(UPLOAD_PATH)
-    blurred = cv2.GaussianBlur(img, (k, k), 0)
-    cv2.imwrite(UPLOAD_PATH, blurred)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    if blur_type == "average":
+        result = cv2.blur(img, (k, k))
+
+    elif blur_type == "gaussian":
+        result = cv2.GaussianBlur(img, (k, k), 0)
+
+    elif blur_type == "median":
+        result = cv2.medianBlur(img, k)
+
+    else:
+        return jsonify(error="Неизвестный тип фильтра"), 400
+
+    cv2.imwrite(UPLOAD_PATH, result)
     return jsonify(message="Размытие применено")
 
 
