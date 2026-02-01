@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн графический редактор</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>Онлайн графический редактор (OpenCV)</h1>
+
+<div class="container">
+
+    <div class="panel">
+        <h3>Загрузка изображения</h3>
+        <input type="file" id="file">
+        <button onclick="upload()">Загрузить</button>
+        <h3>Вырезка произвольной формы</h3>
+        <canvas id="canvas" width="500"></canvas><br>
+    </div>
+
+    <div class="panel">
+        <h3>Масштабирование</h3>
+        <label>fx: <input type="number" id="fx" value="1" step="0.1"></label>
+        <label>fy: <input type="number" id="fy" value="1" step="0.1"></label>
+        <button onclick="resize()">Применить</button>
+    </div>
+
+    <div class="panel">
+        <h3>Обрезка</h3>
+        <input type="number" id="x" placeholder="x">
+        <input type="number" id="y" placeholder="y">
+        <input type="number" id="w" placeholder="width">
+        <input type="number" id="h" placeholder="height">
+        <button onclick="crop()">Вырезать</button>
+    </div>
+
+    <div class="panel">
+        <h3>Отражение</h3>
+        <button onclick="flip(1)">Горизонтально</button>
+        <button onclick="flip(0)">Вертикально</button>
+        <button onclick="flip(-1)">Обе оси</button>
+    </div>
+
+    <div class="panel">
+        <h3>Поворот</h3>
+        <input type="number" id="angle" placeholder="Угол (°)">
+        <button onclick="rotate()">Повернуть</button>
+    </div>
+
+    <div class="panel">
+        <h3>Яркость / Контраст</h3>
+        <label>Контраст:
+            <input type="range" min="0.5" max="3" step="0.1" id="contrast" value="1">
+        </label>
+        <label>Яркость:
+            <input type="range" min="-100" max="100" id="brightness" value="0">
+        </label>
+        <button onclick="brightness()">Применить</button>
+    </div>
+
+    <div class="panel">
+        <h3>Цветовой баланс</h3>
+        R <input type="range" min="-50" max="50" id="r">
+        G <input type="range" min="-50" max="50" id="g">
+        B <input type="range" min="-50" max="50" id="b">
+        <button onclick="color()">Применить</button>
+    </div>
+
+    <div class="panel">
+        <h3>Фильтры</h3>
+        <button onclick="noise()">Добавить шум</button>
+        <input type="number" id="kernel" value="5">
+        <button onclick="blur()">Размытие</button>
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
