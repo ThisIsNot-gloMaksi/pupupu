@@ -51,7 +51,6 @@ def resize():
     return jsonify(message="Размер изменён")
 
 
-# 🔹 Обрезка
 @app.route("/crop", methods=["POST"])
 def crop():
     data = request.json
@@ -141,7 +140,6 @@ def image():
 def mask_crop():
     data = request.json["mask"]
 
-    # убрать префикс base64
     mask_data = base64.b64decode(data.split(",")[1])
     mask_np = np.frombuffer(mask_data, np.uint8)
     mask = cv2.imdecode(mask_np, cv2.IMREAD_GRAYSCALE)
