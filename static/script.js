@@ -197,6 +197,70 @@ function resetImage() {
         });
 }
 
+function changeColorSpace() {
+    fetch("/colorspace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            space: colorSpace.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.error) alert(d.error);
+        else refresh();
+    });
+}
+
+function findObject() {
+    const hex = objectColor.value;
+    const r = parseInt(hex.substr(1,2),16);
+    const g = parseInt(hex.substr(3,2),16);
+    const b = parseInt(hex.substr(5,2),16);
+
+    fetch("/find_object", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            color: [r, g, b],
+            space: searchSpace.value,
+            tolerance: tolerance.value,
+            mode: searchMode.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.error) alert(d.error);
+        else refresh();
+    });
+}
+
+function toggleEdgeParams() {
+    const isSobel = edgeMethod.value === "sobel";
+    sobelParams.style.display = isSobel ? "block" : "none";
+    cannyParams.style.display = isSobel ? "none" : "block";
+}
+
+function applyEdges() {
+    fetch("/edges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            method: edgeMethod.value,
+            ksize: ksize?.value,
+            t1: t1?.value,
+            t2: t2?.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.error) alert(d.error);
+        else refresh();
+    });
+}
+
+
+
 
 setInterval(() => {
     refresh();

@@ -106,6 +106,74 @@
         <button onclick="applyNoise()">Применить</button>
     </div>
 
+    <div class="panel">
+        <h3>Цветовое пространство</h3>
+
+        <select id="colorSpace">
+            <option value="bgr">BGR</option>
+            <option value="hsv">HSV</option>
+        </select>
+
+        <button onclick="changeColorSpace()">Применить</button>
+    </div>
+    <div class="panel">
+        <h3>Поиск объекта по цвету</h3>
+
+        <label>Цвет:
+            <input type="color" id="objectColor">
+        </label>
+
+        <label>Цветовое пространство:
+            <select id="searchSpace">
+                <option value="rgb">RGB</option>
+                <option value="hsv">HSV</option>
+            </select>
+        </label>
+
+        <label>Допуск:
+            <input type="number" id="tolerance" value="20" min="5" max="80">
+        </label>
+
+        <label>Режим:
+            <select id="searchMode">
+                <option value="box">Рамка</option>
+                <option value="crop">Обрезка</option>
+            </select>
+        </label>
+
+        <button onclick="findObject()">Найти</button>
+    </div>
+
+    <div class="panel">
+    <h3>Выделение границ</h3>
+
+    <label>Метод:
+        <select id="edgeMethod" onchange="toggleEdgeParams()">
+            <option value="sobel">Sobel</option>
+            <option value="canny">Canny</option>
+        </select>
+    </label>
+
+    <div id="sobelParams">
+        <label>Размер ядра:
+            <input type="number" id="ksize" value="3" min="3" step="2">
+        </label>
+    </div>
+
+    <div id="cannyParams" style="display:none">
+        <label>Порог 1:
+            <input type="number" id="t1" value="100">
+        </label>
+
+        <label>Порог 2:
+            <input type="number" id="t2" value="200">
+        </label>
+    </div>
+
+    <br>
+    <button onclick="applyEdges()">Применить</button>
+</div>
+
 
     <div class="panel">
         <h3>Сохранение изображения</h3>
@@ -126,6 +194,9 @@
 
         <button onclick="saveImage()">Сохранить</button>
     </div>
+
+
+
 </div>
 
 <script src="/static/script.js"></script>

@@ -272,6 +272,117 @@ def reset():
 
     return jsonify(message="Изображение восстановлено")
 
+@app.route("/colorspace", methods=["POST"])
+def change_colorspace():
+    data = request.json
+    space = data.get("space")
+
+    img = cv2.imread(UPLOAD_PATH)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    save_state()
+
+    if space == "hsv":
+        result = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    elif space == "bgr":
+        result = cv2.cvtColor(img, cv2.COLOR_HLS2BGR)
+
+    else:
+        return jsonify(error="Неизвестное цветовое пространство"), 400
+
+    cv2.imwrite(UPLOAD_PATH, result)
+    return jsonify(message="Цветовое пространство изменено")
+
+@app.route("/find_object", methods=["POST"])
+def find_object():
+    data = request.json
+    color = data.get("color")        # [R, G, B] или [H, S, V]
+    space = data.get("space", "rgb")
+    mode = data.get("mode", "box")   # box | crop
+    tol = int(data.get("tolerance", 20))
+
+    img = cv2.imread(UPLOAD_PATH)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    save_state()
+
+    if space == "hsv":
+        img_cs = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    else:
+        img_cs = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    lower = np.array([max(0, c - tol) for c in color])
+    upper = np.array([min(255, c + tol) for c in color])
+
+    mask = cv2.inRange(img_cs, lower, upper)
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
+                                   cv2.CHAIN_APPROX_SIMPLE)
+
+    if not contours:
+        return jsonify(error="Объект не найден"), 400
+
+    cnt = max(contours, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(cnt)
+
+    if mode == "box":
+        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        result = img
+
+    elif mode == "crop":
+        result = img[y:y+h, x:x+w]
+
+    else:
+        return jsonify(error="Неизвестный режим"), 400
+
+    cv2.imwrite(UPLOAD_PATH, result)
+
+    return jsonify(
+        message="Объект найден",
+        x=x, y=y, width=w, height=h
+    )
+
+@app.route("/edges", methods=["POST"])
+def edges():
+    data = request.json
+    method = data.get("method", "sobel")
+
+    img = cv2.imread(UPLOAD_PATH)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    save_state()
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    if method == "sobel":
+        ksize = int(data.get("ksize", 3))
+
+        gx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=ksize)
+        gy = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=ksize)
+
+        mag = cv2.magnitude(gx, gy)
+        mag = cv2.convertScaleAbs(mag)
+
+        result = mag
+
+    elif method == "canny":
+        t1 = int(data.get("t1", 100))
+        t2 = int(data.get("t2", 200))
+
+        result = cv2.Canny(gray, t1, t2)
+
+    else:
+        return jsonify(error="Неизвестный метод"), 400
+
+    result = cv2.cvtColor(result, cv2.COLOR_GRAY2BGR)
+    cv2.imwrite(UPLOAD_PATH, result)
+
+    return jsonify(message="Выделение границ выполнено")
+
 
 
 
