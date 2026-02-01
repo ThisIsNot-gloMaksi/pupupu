@@ -15,9 +15,16 @@
         <h3>Загрузка изображения</h3>
         <input type="file" id="file">
         <button onclick="upload()">Загрузить</button>
-        <h3>Вырезка произвольной формы</h3>
+        <div></div>
         <canvas id="canvas" width="500"></canvas><br>
     </div>
+
+    <div class="panel">
+    <h3>История изменений</h3>
+    <button onclick="undo()">Undo</button>
+    <button onclick="resetImage()">Reset</button>
+    </div>
+
 
     <div class="panel">
         <h3>Масштабирование</h3>
@@ -51,7 +58,7 @@
     <div class="panel">
         <h3>Яркость / Контраст</h3>
         <label>Контраст:
-            <input type="range" min="0.5" max="3" step="0.1" id="contrast" value="1.75">
+            <input type="range" min="0" max="3" step="0.1" id="contrast" value="1.75">
         </label>
         <label>Яркость:
             <input type="range" min="-100" max="100" id="brightness" value="0">
@@ -61,9 +68,9 @@
 
     <div class="panel">
         <h3>Цветовой баланс</h3>
-        R <input type="range" min="-50" max="50" id="r">
-        G <input type="range" min="-50" max="50" id="g">
-        B <input type="range" min="-50" max="50" id="b">
+        R <input type="range" min="0" max="255" id="r" value="0">
+        G <input type="range" min="0" max="255" id="g" value="0">
+        B <input type="range" min="0" max="255" id="b" value="0">
         <button onclick="color()">Применить</button>
     </div>
 
@@ -82,6 +89,24 @@
         <input type="number" id="kernel" value="5" min="3" step="2">
     </label><button onclick="blurPhoto()">Применить</button>
     </div>
+
+        <div class="panel">
+    <h3>Добавление шума</h3>
+
+    <label>Тип шума:
+        <select id="noiseType">
+            <option value="gaussian">Гауссов</option>
+            <option value="sp">Соль и перец</option>
+        </select>
+    </label>
+
+    <label>Интенсивность:
+        <input type="range" id="noiseAmount"
+               min="0.001" max="0.1" step="0.001" value="0.02">
+    </label>
+
+    <button onclick="applyNoise()">Применить</button>
+</div>
 
 
     <div class="panel">
@@ -103,25 +128,6 @@
 
     <button onclick="saveImage()">Сохранить</button>
 </div>
-    <div class="panel">
-    <h3>Добавление шума</h3>
-
-    <label>Тип шума:
-        <select id="noiseType">
-            <option value="gaussian">Гауссов</option>
-            <option value="sp">Соль и перец</option>
-        </select>
-    </label>
-
-    <label>Интенсивность:
-        <input type="range" id="noiseAmount"
-               min="0.001" max="0.1" step="0.001" value="0.02">
-    </label>
-
-    <button onclick="applyNoise()">Применить</button>
-</div>
-
-
 </div>
 
 <script src="/static/script.js"></script>

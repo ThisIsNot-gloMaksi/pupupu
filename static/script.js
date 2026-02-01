@@ -179,6 +179,25 @@ function toggleQuality() {
     }
 }
 
+function undo() {
+    fetch("/undo", { method: "POST" })
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) alert(d.error);
+            else refresh();
+        });
+}
+
+function resetImage() {
+    fetch("/reset", { method: "POST" })
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) alert(d.error);
+            else refresh();
+        });
+}
+
+
 setInterval(() => {
     refresh();
 }, 1000);
