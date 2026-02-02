@@ -195,6 +195,38 @@
         <button onclick="saveImage()">Сохранить</button>
     </div>
 
+    <div class="panel">
+    <h3>Сегментация (OpenCV)</h3>
+
+    <label>Алгоритм:
+        <select id="segMethod" onchange="toggleSegParams()">
+            <option value="kmeans">K-Means</option>
+            <option value="meanshift">Mean Shift</option>
+            <option value="dbscan">DBSCAN</option>
+            <option value="snake">Snake Segmentation</option>
+        </select>
+    </label>
+
+    <div id="kmeansParams">
+        <label>K:
+            <input type="number" id="k" value="3">
+        </label>
+    </div>
+
+    <div id="meanshiftParams" style="display:none">
+        <label>Spatial radius:
+            <input type="number" id="sp" value="20">
+        </label>
+        <label>Color radius:
+            <input type="number" id="sr" value="30">
+        </label>
+    </div>
+
+    <br>
+    <button onclick="applySegmentation()">Применить</button>
+</div>
+
+
 
 
 </div>

@@ -259,6 +259,33 @@ function applyEdges() {
     });
 }
 
+function toggleSegParams() {
+    kmeansParams.style.display =
+        segMethod.value === "kmeans" ? "block" : "none";
+
+    meanshiftParams.style.display =
+        segMethod.value === "meanshift" ? "block" : "none";
+}
+
+function applySegmentation() {
+    fetch("/segment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            method: segMethod.value,
+            k: k?.value,
+            sp: sp?.value,
+            sr: sr?.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.error) alert(d.error);
+        else refresh();
+    });
+}
+
+
 
 
 

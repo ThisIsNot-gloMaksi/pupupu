@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, send_file, render_template
 import cv2
 import numpy as np
 
+
 app = Flask(__name__)
 UPLOAD_PATH = "uploads/temp.png"
 HISTORY_DIR = "uploads/history"
@@ -383,6 +384,76 @@ def edges():
 
     return jsonify(message="Выделение границ выполнено")
 
+@app.route("/segment", methods=["POST"])
+def segment():
+    data = request.json
+    method = data.get("method")
+
+    img = cv2.imread(UPLOAD_PATH)
+    if img is None:
+        return jsonify(error="Изображение не найдено"), 400
+
+    save_state()
+    h, w = img.shape[:2]
+
+    # === 1. K-Means (OpenCV) ===
+    if method == "kmeans":
+        K = int(data.get("k", 3))
+        Z = img.reshape((-1,3))
+        Z = np.float32(Z)
+
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
+                    10, 1.0)
+
+        _, labels, centers = cv2.kmeans(
+            Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS
+        )
+
+        centers = np.uint8(centers)
+        result = centers[labels.flatten()].reshape((h, w, 3))
+
+    # === 2. Mean Shift (OpenCV) ===
+    elif method == "meanshift":
+        sp = int(data.get("sp", 20))
+        sr = int(data.get("sr", 30))
+
+        result = cv2.pyrMeanShiftFiltering(img, sp, sr)
+
+    # === 3. DBSCAN (OpenCV-подобная реализация) ===
+    elif method == "dbscan":
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        _, bin_img = cv2.threshold(gray, 0, 255,
+                                   cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+        kernel = np.ones((3,3), np.uint8)
+        bin_img = cv2.morphologyEx(bin_img, cv2.MORPH_OPEN, kernel)
+
+        num_labels, labels = cv2.connectedComponents(bin_img)
+
+        result = np.zeros_like(img)
+        for lab in range(1, num_labels):
+            mask = labels == lab
+            result[mask] = img[mask].mean(axis=0)
+
+    # === 4. Snake Segmentation (OpenCV approximation) ===
+    elif method == "snake":
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray, 100, 200)
+
+        contours, _ = cv2.findContours(
+            edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+        )
+
+        result = img.copy()
+        if contours:
+            cnt = max(contours, key=cv2.contourArea)
+            cv2.drawContours(result, [cnt], -1, (0,255,0), 2)
+
+    else:
+        return jsonify(error="Неизвестный алгоритм"), 400
+
+    cv2.imwrite(UPLOAD_PATH, result)
+    return jsonify(message="Сегментация выполнена")
 
 
 
